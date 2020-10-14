@@ -1,0 +1,14 @@
+---
+- name: Configure Network Provisioning
+  hosts: satellite
+
+  tasks:
+
+  - name: Configure Network Resources
+    shell: satellite-installer --foreman-proxy-dns true --foreman-proxy-dns-interface eth0 --foreman-proxy-dns-forwarders 172.25.250.254 --foreman-proxy-dns-zone boston.lab.example.com --foreman-proxy-dns-reverse 250.25.172.in-addr.arpa --foreman-proxy-dhcp true --foreman-proxy-dhcp-interface eth0 --foreman-proxy-dhcp-range "172.25.250.50 172.25.250.100" --foreman-proxy-dhcp-nameservers 172.25.250.15 --foreman-proxy-dhcp-gateway 172.25.250.254 --foreman-proxy-tftp true
+
+  - name: Configure Boston Domain
+    shell: hammer domain create --name boston.lab.example.com  --dns satellite.lab.example.com --locations "Boston","Default Location" --organization "Operations"
+
+  - name: Configure Boston Subnet
+    shell: hammer subnet create --name "Boston Data Center" --locations "Boston","Default Location" --organizations "Operations" --domains boston.lab.example.com --network 172.25.250.0 --mask 255.255.255.0 --dns-primary 172.25.250.15 --from 172.25.250.50 --to 172.25.250.100 --dns satellite.lab.example.com --dhcp satellite.lab.example.com --tftp satellite.lab.example.com --boot-mode DHCP --ipam DHCP --httpboot-id 1 --template-id 1 --discovery-id 1

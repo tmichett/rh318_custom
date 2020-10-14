@@ -1,0 +1,17 @@
+---
+- name: Configure Kickstart Channels
+  hosts: satellite
+
+  tasks:
+
+  - name: Configure Kickstart Channels - RHEL8 Appstream
+    shell: hammer repository-set enable --name 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (Kickstart)' --releasever 8.1 --product 'Red Hat Enterprise Linux for x86_64' --organization Operations
+
+  - name: Configure Kickstart Channels - RHEL8 BaseOS
+    shell: hammer repository-set enable --name 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (Kickstart)' --releasever 8.1 --product 'Red Hat Enterprise Linux for x86_64' --organization Operations
+
+  - name: Synchronize Kickstart Channels - RHEL8 BaseOS
+    shell: hammer repository synchronize --name "Red Hat Enterprise Linux 8 for x86_64 - BaseOS Kickstart 8.1" --organization Operations --product 'Red Hat Enterprise Linux for x86_64' --async
+
+  - name: Synchronize Kickstart Channels - RHEL8 BasoOS
+    shell: hammer repository synchronize --name "Red Hat Enterprise Linux 8 for x86_64 - AppStream Kickstart 8.1" --organization Operations --product 'Red Hat Enterprise Linux for x86_64' --async

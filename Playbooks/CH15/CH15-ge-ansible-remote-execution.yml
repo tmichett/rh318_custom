@@ -1,0 +1,69 @@
+---
+- name: Configure Satellite for ansible
+  hosts: satellite
+
+  tasks:
+
+  - name: Download Ansible Role
+    get_url:
+      url: http://materials/Sat6_Files/ansible-role.tgz
+      dest: /root/ansible-role.tgz
+
+  - name: Extract Ansible Role
+    unarchive:
+      src: /root/ansible-role.tgz
+      dest: /root/
+      remote_src: yes
+
+## Check for Content Directory Existance
+  - name: Check on /etc/ansible/roles/motd/
+    stat:
+      path: /etc/ansible/roles/motd
+    register: SAT6_Dir
+
+  - name: Output Directory Status
+    debug:
+      msg: "The Satellite /etc/ansible/roles/motd/ directory already exists"
+    when: SAT6_Dir.stat.exists
+
+## Create the directory for Ansible Roles
+  - name: Create /etc/ansible/roles/motd/ Directory
+    file:
+      path: /etc/ansible/roles/motd/
+      state: directory
+      mode: '0755'
+    when: SAT6_Dir.stat.exists == false
+
+## Create the directory for Ansible Roles
+  - name: Create /etc/ansible/roles/motd/tasks Directory
+    file:
+      path: /etc/ansible/roles/motd/tasks
+      state: directory
+      mode: '0755'
+    when: SAT6_Dir.stat.exists == false
+
+## Create the directory for Ansible Roles
+  - name: Create /etc/ansible/roles/motd/templates Directory
+    file:
+      path: /etc/ansible/roles/motd/templates
+      state: directory
+      mode: '0755'
+    when: SAT6_Dir.stat.exists == false
+
+  - name: Copy main.yaml to Tasks
+    copy:
+      src: /root/main.yaml
+      dest: /etc/ansible/roles/motd/tasks/main.yaml
+      remote_src: yes
+
+  - name: Copy motd.j2 to Templates
+    copy:
+      src: /root/motd.j2
+      dest: /etc/ansible/roles/motd/templates/motd.j2
+      remote_src: yes
+
+  - name: Import Motd Role
+    shell: hammer ansible roles import --proxy-id 1 --role-names motd
+
+  - name: Set Default Variable Value
+    shell: hammer ansible variables create --ansible-role motd --variable new_var --override true --variable-type string --default-value "Hello from the RH318 Custom course"  

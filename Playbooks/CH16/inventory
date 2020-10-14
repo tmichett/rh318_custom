@@ -1,0 +1,12 @@
+classroom
+
+[dhcp]
+host[a:d]
+
+[infra]
+bastion
+utility
+workstation
+rhvm
+host[a:d]
+satellite

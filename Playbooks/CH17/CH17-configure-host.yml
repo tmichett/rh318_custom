@@ -1,0 +1,18 @@
+---
+- name: Configure Host and Host Group
+  hosts: satellite
+
+  tasks:
+
+  - name: Configure Operations Host Group
+    shell: hammer hostgroup create --organization Operations --location Boston --subnet "Boston Data Center" --domain "boston.lab.example.com" --content-source "satellite.lab.example.com" --operatingsystem "RedHat 8.1" --pxe-loader "PXELinux BIOS" --partition-table "Kickstart default" --name "Operations Host Group" --lifecycle-environment Library --content-view "Default Organization View" --ansible-roles motd --architecture x86_64
+
+  - name: Set Activation Key on Operations Host Group
+    shell: hammer hostgroup set-parameter --name kt_activation_keys --value "OperationsServers" --hostgroup "Operations Host Group"
+
+
+  - name: Configure Operations Virtual Host Group
+    shell: hammer hostgroup create --organization Operations --location Boston --subnet "Boston Data Center" --domain "boston.lab.example.com" --content-source "satellite.lab.example.com" --operatingsystem "RedHat 8.1" --pxe-loader "PXELinux BIOS" --partition-table "Kickstart default" --name "Operations Virtual Host Group" --lifecycle-environment Library --content-view "Default Organization View" --ansible-roles motd --architecture x86_64 --compute-resource "RHV Production Datacenter"
+
+  - name: Set Activation Key on Operations Host Group
+    shell: hammer hostgroup set-parameter --name kt_activation_keys --value "OperationsServers" --hostgroup "Operations Virtual Host Group"

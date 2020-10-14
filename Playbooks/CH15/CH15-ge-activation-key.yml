@@ -1,0 +1,17 @@
+---
+- name: Configure Activation Key
+  hosts: satellite
+
+  tasks:
+
+  - name: Create Operations Activation Key
+    shell: hammer activation-key create --name OperationsServers --organization Operations
+
+  - name: Add Subscriptions to Activation Key
+    shell: hammer --csv --no-headers subscription list --organization Operations  | cut -d, -f1 | xargs -n 1 hammer activation-key add-subscription --name OperationsServers --organization Operations --subscription-id
+
+  - name: Enable Satellite 6 Tools on Activation Key
+    shell: hammer --csv activation-key product-content --name OperationsServers --organization Operations | awk -F, "/satellite-tools.*rhel-8/ {print \$3}" | xargs hammer activation-key content-override --name OperationsServers --organization Operations --value 1  --content-label
+
+  - name: Set Content View, Environment, and Release on Activation Key
+    shell: hammer activation-key update --name OperationsServers --content-view "Default Organization View" --lifecycle-environment Library --unlimited-hosts --organization Operations --release-version 8.1

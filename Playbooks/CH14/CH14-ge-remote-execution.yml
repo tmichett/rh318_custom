@@ -1,0 +1,5 @@
+- hosts: satellite
+
+  tasks:
+    - name: Set Remote Execution to Connect by IP Address
+      shell: hammer settings set --name remote_execution_connect_by_ip --value yes

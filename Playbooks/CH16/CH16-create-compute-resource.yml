@@ -1,0 +1,11 @@
+---
+- name: Configure Compute Resources
+  hosts: satellite
+
+  tasks:
+
+  - name: Create Development DataCenter
+    shell: hammer compute-resource create --name "RHV Development Datacenter" --provider "Ovirt" --description "Compute Resource for Development Data Center" --url "https://rhvm.lab.example.com/ovirt-engine/api" --use-v4 "false" --user "admin@internal" --password "redhat" --locations "Boston" --organizations "Operations" --datacenter "development"
+
+  - name: Create Production DataCenter
+    shell: hammer compute-resource create --name "RHV Production Datacenter" --provider "Ovirt" --description "Compute Resource for Production Data Center" --url "https://rhvm.lab.example.com/ovirt-engine/api" --use-v4 "false" --user "admin@internal" --password "redhat" --locations "Boston" --organizations "Operations" --datacenter "production"
