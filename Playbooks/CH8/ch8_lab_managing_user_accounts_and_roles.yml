@@ -1,0 +1,103 @@
+---
+- hosts: rhvm.lab.example.com
+  user: root
+  become: false
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+
+  tasks:
+
+    # System-Level Roles
+    # Reuires that a user exists, so must be verified first.
+
+    - name: Ensure labadmin user exists
+      ovirt_user:
+        auth: "{{ ovirt_auth }}"
+        name: labadmin
+        state: present
+        authz_name: lab.example.com-authz
+
+    - name: Assign labadmin User Admin Role in RHV
+      ovirt_permission:
+        auth: "{{ ovirt_auth }}"
+        user_name: labadmin
+        authz_name: lab.example.com-authz
+        object_type: system
+        role: SuperUser
+        state: present
+
+## DataCenter Level Roles
+## Perform check to see user exists
+
+    - name: Ensure labdcadmin user exists
+      ovirt_user:
+        auth: "{{ ovirt_auth }}"
+        name: labdcadmin
+        state: present
+        authz_name: lab.example.com-authz
+
+    - name: Assigning role to labdcadmin
+      ovirt_permission:
+        auth: "{{ ovirt_auth }}"
+        user_name: labdcadmin
+        authz_name: lab.example.com-authz
+        object_type: data_center
+        object_name: Default
+        role: DataCenterAdmin
+        state: present
+
+    - name: Ensure labpoweruser user exists
+      ovirt_user:
+        auth: "{{ ovirt_auth }}"
+        name: labpoweruser
+        state: present
+        authz_name: lab.example.com-authz
+
+    - name: Assigning role to labpoweruser
+      ovirt_permission:
+        auth: "{{ ovirt_auth }}"
+        user_name: labpoweruser
+        authz_name: lab.example.com-authz
+        object_type: data_center
+        object_name: Default
+        role: PowerUserRole
+        state: present
+
+    - name: Ensure labnormaluser user exists
+      ovirt_user:
+        auth: "{{ ovirt_auth }}"
+        name: labnormaluser
+        state: present
+        authz_name: lab.example.com-authz
+
+    - name: Assigning role to labdcadmin
+      ovirt_permission:
+        auth: "{{ ovirt_auth }}"
+        user_name: labnormaluser
+        authz_name: lab.example.com-authz
+        object_type: data_center
+        object_name: Default
+        role: UserRole
+        state: present
+
+  post_tasks:
+    - name: Logout from RHV
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+      tags:
+        - alwaysovi

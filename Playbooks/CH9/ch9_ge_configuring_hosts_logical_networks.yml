@@ -1,0 +1,60 @@
+---
+- hosts: rhvm.lab.example.com
+  user: root
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: development
+    cluster_name: clusterone
+
+  tasks:
+
+    - name: Setup RHV-H Host Network for VMs
+      ovirt_host_network:
+        auth: "{{ ovirt_auth }}"
+        name: hostb.lab.example.com
+        check: true
+        save: true
+        interface: eth0
+        networks:
+          - name: vm-net
+            boot_protocol: dhcp
+
+
+
+    - name: Setup RHV-H Host Network for Storage
+      ovirt_host_network:
+        auth: "{{ ovirt_auth }}"
+        name: hostb.lab.example.com
+        check: true
+        save: true
+        interface: eth1
+        networks:
+          - name: storage-net
+            boot_protocol: static
+            address: 172.24.0.11
+            netmask: 255.255.255.0
+
+
+  post_tasks:
+    - name: Logout from RHV
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+      tags:
+        - alwaysovi

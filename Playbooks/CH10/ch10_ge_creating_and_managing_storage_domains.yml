@@ -1,0 +1,69 @@
+---
+- hosts: rhvm.lab.example.com
+  user: root
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: development
+    cluster_name: clusterone
+
+  tasks:
+
+
+    - name: Gather iSCSI Facts
+      ovirt_host_storage_facts:
+        auth: "{{ ovirt_auth }}"
+        host: hostb.lab.example.com
+        iscsi:
+         target: iqn.2019-07.com.example.lab:utility
+         address: 172.24.0.8
+      register: dev_results
+
+    - name: Setup iSCSI Storage Facts
+      set_fact:
+        lun_id: "{{ ovirt_host_storages | map(attribute='id') | list }}"
+
+    - name: output of LUN ID
+      debug:
+         var: lun_id
+
+    - name: Setup iSCSI Storage
+      ovirt_storage_domain:
+        auth: "{{ ovirt_auth }}"
+        data_center: "{{ data_center_name }}"
+        host: hostb.lab.example.com
+        iscsi:
+          target: iqn.2019-07.com.example.lab:utility
+          lun_id: "{{ lun_id }}"
+          address: 172.24.0.8
+        name: iscsi-data
+        comment: Development DataCenter VM Storage
+        description: Development DataCenter iSCSI Storage
+        domain_function: data
+        state: present
+        wipe_after_delete: no
+        discard_after_delete: no
+
+
+  post_tasks:
+    - name: Logout from RHV
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+      tags:
+        - alwaysovi
