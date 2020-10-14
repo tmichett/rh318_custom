@@ -1,0 +1,1 @@
+This directory contains playbooks and labs for the Guided Exercises and Labs in Chapter 6 (DataCenters and Clusters).

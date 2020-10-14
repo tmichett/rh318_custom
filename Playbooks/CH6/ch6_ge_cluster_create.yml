@@ -1,0 +1,65 @@
+---
+- hosts: rhvm.lab.example.com
+  user: root
+  become: false
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+  vars:
+    # Place Task/Playbook Specific Variables Here
+    data_center_name: development
+    data_center_local: false
+    compatibility_version: 4.3
+    cluster_name: clusterone
+    cluster_description: Development Cluster
+    cluster_cpu_type: Intel Westmere IBRS SSBD MDS Family 
+    cluster_mac_pool_name: mac-pool-clusterone
+    mac_pool_start: "56:6f:07:a7:0a:01"
+    mac_pool_finish: "56:6f:07:a7:0a:0a"
+
+
+## Needs tasks for cluster creation, MAC Address pool setup, and setting ip the MAC pool for the cluster.
+
+  tasks:
+
+    # Create MAC pool:
+    - name: Create MAC pool for cluster
+      ovirt_mac_pool:
+        auth: "{{ ovirt_auth }}"
+        name: "{{ cluster_mac_pool_name  }}"
+        allow_duplicates: false
+        ranges:
+          - "{{ mac_pool_start  }},{{ mac_pool_finish  }}"
+          
+    # Create Cluster and set MAC Address Pool
+    - name: Add cluster
+      ovirt_cluster:
+        auth: "{{ ovirt_auth }}"
+        data_center: "{{ data_center_name }}"
+        state: present
+        name: "{{ cluster_name }}"
+        cpu_type: "{{ cluster_cpu_type  }}"
+        description: "{{ cluster_description }}"
+        compatibility_version: "{{ compatibility_version }}"
+        mac_pool: "{{ cluster_mac_pool_name  }}"
+
+  post_tasks:
+    - name: Logout from RHV
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+      tags:
+        - alwaysovi
