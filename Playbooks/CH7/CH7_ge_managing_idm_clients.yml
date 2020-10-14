@@ -1,0 +1,55 @@
+---
+- name: Install IdM Client on VM
+  hosts: client
+  vars:
+    ipa_server: idm.lab.example.com 
+    ipa_server_ip: 172.25.250.8 
+    ipa_domain: lab.example.net 
+    ipa_realm: LAB.EXAMPLE.NET 
+    ipa_admin_password: RedHat123^
+
+  tasks:
+    - name: Get Kerberos credentials as IPA admin
+      shell: echo "{{ipa_admin_password }}" | kinit -f admin 
+      ignore_errors: yes
+      register: cred_result
+      changed_when: false
+    
+    - name: Output "Cred_result"
+      debug:
+        var: cred_result
+
+    - name: Setup Repository on system
+      copy:
+        src: /etc/yum.repos.d/rhel_dvd.repo
+        dest: /etc/yum.repos.d/rhel_dvd.rh
+     
+    - name: Fix DNS Server on Client
+      nmcli:
+        conn_name: "eth0"
+        type: ethernet
+        dns4:
+          - 172.25.250.8
+        state: present
+
+    - name: 
+      command: nmcli connection up "eth0"
+
+    - name: Copy /etc/resolv.conf
+      copy:
+        src: ./resolv.conf
+        dest: /etc/resolv.conf
+        force: true
+    
+    - name: IPA client installed 
+      yum:
+        name: ipa-client 
+        state: latest
+
+    - name: Install IPA client 
+      command: >
+        ipa-client-install 
+        --principal=admin
+        --password={{ ipa_admin_password }} 
+        --unattended
+      when: "'kinit: Configuration file does not specify default realm when parsing name admin' or '/bin/sh: kinit: command not found' in cred_result.stderr" # or '"kinit: command not found" in cred_result.stderr'
