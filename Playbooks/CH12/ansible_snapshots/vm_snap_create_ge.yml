@@ -1,0 +1,50 @@
+---
+- hosts: rhvm.lab.example.com
+  user: root
+  become: false
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: production
+    data_center_description: Production Data Center
+    data_center_local: false
+    compatibility_version: "4.3"
+    cluster_name: clustertwo
+    cluster_description: Production Cluster Two
+    cluster_cpu_type: Intel Westmere IBRS SSBD Family
+    cluster_mac_pool_name: mac-pool-clustertwo
+    mac_pool_start: "56:6f:07:a7:14:01"
+    mac_pool_finish: "56:6f:07:a7:14:0a"
+    vm_name: REPLACE_ME
+    vm_snap_desc: REPLACE_ME 
+
+  tasks:
+    - name: Create a VM Snapshot
+      ovirt_snapshot:
+        auth: "{{ ovirt_auth }}"
+        vm_name: "{{ vm_name  }}"
+        description: "{{ vm_snap_desc  }}"
+      register: snapshot
+
+  post_tasks:
+    - name: Logout from RHV
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+      tags:
+        - alwaysovi
