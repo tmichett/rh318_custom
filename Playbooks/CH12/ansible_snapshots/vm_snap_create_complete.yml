@@ -30,8 +30,8 @@
     cluster_mac_pool_name: mac-pool-clustertwo
     mac_pool_start: "56:6f:07:a7:14:01"
     mac_pool_finish: "56:6f:07:a7:14:0a"
-    vm_name: rhel-test 
-    vm_snap_desc: rhel-test-snapshot
+    vm_name: rhel7 
+    vm_snap_desc: rhel-test-snapshot DDS Demo
 
   tasks:
     - name: Create a VM Snapshot
