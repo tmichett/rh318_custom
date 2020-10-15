@@ -1,0 +1,22 @@
+
+---
+- name: Cleanup Intranet services
+  hosts: web
+  become: yes
+  tasks:
+    - name: rhel_dvd.repo is removed
+      file:
+        path: /etc/yum.repos.d/rhel_dvd.repo
+        state: absent
+
+    - name: latest version of httpd and firewalld removed
+      yum:
+        name:
+          - httpd
+          - firewalld
+        state: absent 
+
+    - name: test html page is removed
+      file:
+        path: /var/www/html/index.html
+        state: absent

@@ -1,0 +1,25 @@
+---
+- name: Cleanup  internet services lab
+  hosts: webserver_lab
+  become: yes
+  tasks:
+
+  - name: Ensure removal of  packages that were installed for Internet lab
+    yum:
+      name:
+        - firewalld
+        - httpd
+        - mariadb-server
+        - php
+        - php-mysqlnd
+      state: absent 
+
+  - name: test php page is installed
+    file:
+      path: /var/www/html/index.php
+      state: absent
+
+  - name: test php page is installed
+    file:
+      path: /var/www/html/info.php
+      state: absent

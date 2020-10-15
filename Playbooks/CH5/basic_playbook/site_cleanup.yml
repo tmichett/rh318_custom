@@ -1,0 +1,20 @@
+
+---
+- name: Remove Apache HTTPD and Index.html
+  hosts: web
+  tasks:
+    - name: rhel_dvd.repo is removed
+      file:
+        path: /yum.repos.d/rhel_dvd.repo
+        state: absent
+
+
+    - name: httpd package is removed
+      yum:
+        name: httpd
+        state: absent 
+
+    - name: index.html is removed 
+      file:
+        path: /var/www/html/index.html
+        state: absent

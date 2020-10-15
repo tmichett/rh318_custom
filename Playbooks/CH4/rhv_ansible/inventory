@@ -1,0 +1,11 @@
+rhvm.lab.example.com
+hosta.lab.example.com
+hostb.lab.example.com
+hostc.lab.example.com
+hostd.lab.example.com
+
+[control_node]
+localhost
+
+[rhvm]
+rhvm.lab.example.com

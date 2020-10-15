@@ -1,0 +1,17 @@
+
+###  Classroom Resources  ##
+172.25.254.254	classroom.example.com classroom
+172.25.254.254	content.example.com content
+172.25.254.254	materials.example.com materials
+
+###  RHV Infrastructure and Management Systems  ##
+172.25.250.14   rhvm.lab.example.com rhvm
+172.25.250.8    utility.lab.example.com utility
+172.25.250.9    workstation.lab.example.com  workstation
+
+###  RHV Hosts  ##
+172.25.250.10    hosta.lab.example.com hosta
+172.25.250.11    hostb.lab.example.com hostb
+172.25.250.12    hostc.lab.example.com hostc
+172.25.250.13    hostd.lab.example.com hostd
+

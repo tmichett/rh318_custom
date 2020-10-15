@@ -1,0 +1,31 @@
+---
+- name: Cleanup  internet services lab
+  hosts: webserver_lab
+  become: yes
+  tasks:
+
+  - name: RHEL DVD Repo Is not installed
+    file:
+      path: /etc/yum.repos.d/rhel_dvd.repo
+      state: absent
+
+
+  - name: Ensure removal of  packages that were installed for Internet lab
+    yum:
+      name:
+        - firewalld
+        - httpd
+        - mariadb-server
+        - php
+        - php-mysqlnd
+      state: absent 
+
+  - name: test php page is not installed
+    file:
+      path: /var/www/html/index.php
+      state: absent
+
+  - name: test php page is not installed
+    file:
+      path: /var/www/html/info.php
+      state: absent
