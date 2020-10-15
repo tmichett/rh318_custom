@@ -1,0 +1,61 @@
+---
+- hosts: rhvm.lab.example.com
+  user: root
+  become: false
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: development
+    vm_name: rhel-test
+
+  tasks:
+
+    - name: Export Template to Development Export Domain
+      ovirt_template:
+        auth: "{{ ovirt_auth }}"
+        name: RHEL76_TMP
+        export_domain: nfs-move
+        state: exported
+
+#    - name: Detach NFS Storage Development Export Domain - Development Data Center
+#      ovirt_storage_domain:
+#        auth: "{{ ovirt_auth }}"
+#        name: Dev_EXPORT_Data
+#        state: unattached
+
+#    - name: Detach NFS Storage Productionn Export Domain - Production Data Center
+#      ovirt_storage_domain:
+#        auth: "{{ ovirt_auth }}"
+#        name: Prod_EXPORT_Data
+#        state: unattached
+
+#    - name: Attach NFS Storage Develepment Export Domain - Production Data Center
+#      ovirt_storage_domain:
+#        auth: "{{ ovirt_auth }}"
+#        name:  Dev_EXPORT_Data
+#        data_center: Production
+#        state: present
+
+
+  post_tasks:
+    - name: Logout from RHV
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+      tags:
+        - alwaysovi

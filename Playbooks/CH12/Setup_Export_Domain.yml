@@ -1,0 +1,50 @@
+---
+- hosts: rhvm.lab.example.com
+  user: root
+  become: false
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: development
+    vm_name: rhel-test
+
+
+  tasks:
+
+    - name: Setup NFS Storage Export Domain
+      ovirt_storage_domain:
+        auth: "{{ ovirt_auth }}"
+        data_center: "{{ data_center_name }}"
+        host: hostb
+        nfs:
+         address: 172.24.0.8
+         path: /exports/data2
+         version: v4
+        name: nfs-move
+        domain_function: export
+        comment: VM Export Domain
+        description: VM Export Domain Demo
+        state: present
+
+  post_tasks:
+    - name: Logout from RHV
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+      tags:
+        - alwaysovi
