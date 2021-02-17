@@ -1,0 +1,10 @@
+[rhel-8.0-for-x86_64-baseos-rpms]
+baseurl = http://content.example.com/rhel8.0/x86_64/dvd/BaseOS
+enabled = true
+gpgcheck = false
+name = Red Hat Enterprise Linux 8.0 BaseOS (dvd)
+[rhel-8.0-for-x86_64-appstream-rpms]
+baseurl = http://content.example.com/rhel8.0/x86_64/dvd/AppStream
+enabled = true
+gpgcheck = false
+name = Red Hat Enterprise Linux 8.0 AppStream (dvd)
