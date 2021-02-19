@@ -1,0 +1,11 @@
+---
+- name: Configure Satellite Parameters for Hammer CLI
+  hosts: satellite
+
+  tasks:
+
+  - name: Set Download Policy
+    shell: hammer settings set --name default_download_policy --value immediate
+
+  - name: Set Login Banner Text
+    shell: hammer settings set --name login_text --value "Warning, you are accessing a sensitive computer system. This message is required by the DISA STIG settings. Anything you do is being monitored."
