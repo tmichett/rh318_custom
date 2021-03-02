@@ -29,7 +29,7 @@
         - name: Identify VMs on hosts
           ovirt_vm_facts:
             auth: "{{ ovirt_auth }}"
-            pattern: host={{ item.name }}
+            pattern: host={{ item }}
           loop: "{{ rhvh }}"
 
         - name: Stopping all VMs on host
@@ -52,10 +52,10 @@
 
 
 
-    post_tasks:
-      - name: Logout from RHV
-        ovirt_auth:
-          state: absent
-          ovirt_auth: "{{ ovirt_auth }}"
-        tags:
-          - alwaysovi
+  post_tasks:
+    - name: Logout from RHV
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+      tags:
+        - alwaysovi
