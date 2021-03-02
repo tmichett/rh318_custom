@@ -26,15 +26,16 @@
         auth: "{{ ovirt_auth }}"
         state: maintenance
 
+    - name: Pause for Maintenance Mode
+      pause:
+        seconds: 45
+
     - name: Remove HostB from Cluster
       ovirt_host:
         name: hostb.lab.example.com
         auth: "{{ ovirt_auth }}"
         state: absent
 
-    - name: Pause for Maintenance Mode
-      pause:
-        seconds: 45
 
     - name: Move HostB into Development DC and ClusterOne
       ovirt_host:
@@ -52,6 +53,10 @@
         name: hostc.lab.example.com
         auth: "{{ ovirt_auth }}"
         state: maintenance
+        
+    - name: Pause for Maintenance Mode
+      pause:
+        seconds: 45
 
     - name: Remove HostC from Cluster
       ovirt_host:
@@ -59,9 +64,7 @@
         auth: "{{ ovirt_auth }}"
         state: absent
 
-    - name: Pause for Maintenance Mode
-      pause:
-        seconds: 45
+
 
     - name: Move HostC into Production DC and ClusterTwo
       ovirt_host:
