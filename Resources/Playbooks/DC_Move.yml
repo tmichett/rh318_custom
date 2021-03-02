@@ -32,6 +32,9 @@
         auth: "{{ ovirt_auth }}"
         state: absent
 
+    - name: Pause for Maintenance Mode
+      pause:
+        seconds: 15
 
     - name: Move HostB into Development DC and ClusterOne
       ovirt_host:
