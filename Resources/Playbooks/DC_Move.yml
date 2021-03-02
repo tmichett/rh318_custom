@@ -26,6 +26,11 @@
         auth: "{{ ovirt_auth }}"
         state: maintenance
 
+    - name: Move HostB into Development DC and ClusterOne
+      ovirt_host:
+        name: hostb.lab.example.com
+        auth: "{{ ovirt_auth }}"
+        cluster: clusterone
 
 
   post_tasks:
