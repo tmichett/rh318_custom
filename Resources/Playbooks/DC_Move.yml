@@ -33,6 +33,7 @@
         cluster: clusterone
         state: reinstalled
         password: "{{ engine_password }}"
+        public_key: true
         force: true
 
 
