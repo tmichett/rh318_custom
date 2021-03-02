@@ -1,0 +1,37 @@
+---
+- hosts: rhvm.lab.example.com
+  user: root
+  become: false
+
+  tasks:
+
+    # Create DataCenters and Clusters
+    - name: Create Development DC
+      import_playbook: Playbooks/dc_create.yml
+
+    - name: Create ClusterOne
+      import_playbook: Playbooks/cluster_create.yml
+
+    - name: Create Production DC and ClusterTwo
+      import_playbook: Playbooks/dc_cluster_create.yml
+
+    # Move Hosts to Correct DataCenter and Cluster
+
+
+    # Configure Networking
+    - name: Create Logical Networks for Development
+      import_playbook: Playbooks/managing_logical_networks.yml
+
+    - name: Create Host Networks for Development
+      import_playbook: Playbooks/configuring_hosts_logical_networks.yml
+
+    - name: Create Logical Networks and Host Networks for Production
+      import_playbook: Playbooks/managing_rhv_networks.yml
+
+
+    # Configure Storage
+    - name: Configure Development Storage
+      import_playbook: Playbooks/creating_and_managing_storage_domains.yml
+
+    - name: Configure Development Storage
+      import_playbook: Playbooks/managing_rhv_storage.yml
