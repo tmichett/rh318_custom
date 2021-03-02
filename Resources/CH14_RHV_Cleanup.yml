@@ -1,0 +1,56 @@
+---
+- hosts: rhvm.lab.example.com
+
+  vars:
+    rhvh:
+      - hostb.lab.example.com
+      - hostc.lab.example.com
+      - hostd.lab.example.com
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+
+  tasks:
+
+    - block:
+        - name: Identify VMs on hosts
+          ovirt_vm_facts:
+            auth: "{{ ovirt_auth }}"
+            pattern: host={{ item.name }}
+          loop: "{{ rhvh }}"
+
+        - name: Stopping all VMs on host
+          ovirt_vm:
+            auth: "{{ ovirt_auth }}"
+            name: "{{ item.name }}"
+            state: stopped
+          loop: "{{ ovirt_vms }}"
+          loop_control:
+            label: "Stopping Virtual Machine: {{ item.name }}"
+          when: item['name'] is defined and item['status'] == "up"
+          register: vm_stop
+
+
+
+
+
+    post_tasks:
+      - name: Logout from RHV
+        ovirt_auth:
+          state: absent
+          ovirt_auth: "{{ ovirt_auth }}"
+        tags:
+          - alwaysovi
