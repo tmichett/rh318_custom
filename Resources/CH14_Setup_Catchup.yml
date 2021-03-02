@@ -1,5 +1,12 @@
 ---
 - hosts: rhvm.lab.example.com
+
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
 # Create DataCenters and Clusters
 - name: Create Development DC
   import_playbook: Playbooks/dc_create.yml
