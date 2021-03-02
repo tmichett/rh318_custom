@@ -31,7 +31,7 @@
         name: hostb.lab.example.com
         auth: "{{ ovirt_auth }}"
         cluster: clusterone
-        state: present
+        state: reinstalled
         force: true
 
 
