@@ -1,0 +1,73 @@
+---
+- hosts: rhvm.lab.example.com
+  user: root
+  become: true
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+
+  vars:
+    data_center_name: development
+    cluster_name: clusterone
+    cluster_description: Development Cluster
+
+  tasks:
+    # Creates a VM from a template
+    - name: Create a VM from template
+      ovirt_vm:
+        auth: "{{ ovirt_auth }}"
+        state: running
+        name: DEMO1
+        template: DCO_CI_TMP
+        cluster: "{{ cluster_name }}"
+        timezone: America/New_York
+        cloud_init_persist: true
+### Begin Cloud Init Customizations
+        cloud_init:
+          nic_boot_protocol: dhcp
+          nic_name: eth0
+          nic_on_boot: true
+          host_name: Demo1
+          user_name: ansible-user
+          root_password: r3dh4t1
+          authorized_ssh_keys: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCucMK8pPDth/YOScYspZI77TURQ2F+h0TAC2P0o6Ec2oXp5zwDmDrUmnK4OQsgoEyvduoSutrvn0H6UBsFvWJF7WNE+oSdrSuzhQbLJSun+YwBy3kVv2N2zuVvUy4iFVnfwoGSG4EqI6gKxpvCszjwOn2agu8XX3+Q6VUWS8BHbsBCJkjdeRnCKa4RL8iOFmZ5csK6jnjaKxDT7fOnrrvpxMeG8XunlYim+9B7iQzDpdGtPsMl16OANsZbGGd2G8k5ldjRdrwyuvSUMzbChQByMyLz/Xckse5ArXcKWOcER6iZIQe3o7cO0gAVShmriJ3ZPKNkbTj+AHloPiu0Yng7 ansible-user@idm"
+          timezone: America/New_York
+##### Cloud Init Custom Scripts using "users", "runcmd", "write_files", and "packages"
+          custom_script: |
+            users:
+              - name: demo
+                groups: wheel
+                shell: /bin/bash
+                sudo: ['ALL=(ALL) NOPASSWD:ALL']
+            runcmd:
+              - echo "redhat" | passwd --stdin demo
+            write_files:
+              - path: /home/demo/.vimrc
+                content: |
+                  autocmd FileType yaml setlocal ai ts=2 sw=2 et colorcolumn=3,5,7,9,11
+            packages:
+              - emacs
+              - vim
+              - tmux
+
+
+  post_tasks:
+    - name: Logout from RHV
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+      tags:
+        - alwaysovi
