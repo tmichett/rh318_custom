@@ -43,6 +43,11 @@
           when: item['name'] is defined and item['status'] == "up"
           register: vm_stop
 
+        - name: Pause 25 seconds for VMs to stop
+          pause:
+            seconds: 25
+          when: vm_stop.changed
+
 
 
 
