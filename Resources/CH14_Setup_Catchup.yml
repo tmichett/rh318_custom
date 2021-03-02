@@ -18,7 +18,8 @@
   import_playbook: Playbooks/dc_cluster_create.yml
 
 # Move Hosts to Correct DataCenter and Cluster
-
+- name: Move hosts to Proper DC
+  import_playbook: Playbooks/DC_Move.yml
 
 # Configure Networking
 - name: Create Logical Networks for Development
