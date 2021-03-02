@@ -32,6 +32,7 @@
         auth: "{{ ovirt_auth }}"
         cluster: clusterone
         state: reinstalled
+        password: "{{ engine_password }}"
         force: true
 
 
