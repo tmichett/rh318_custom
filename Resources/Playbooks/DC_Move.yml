@@ -26,14 +26,22 @@
         auth: "{{ ovirt_auth }}"
         state: maintenance
 
+    - name: Remove HostB from Cluster
+      ovirt_host:
+        name: hostb.lab.example.com
+        auth: "{{ ovirt_auth }}"
+        state: absent
+
+
     - name: Move HostB into Development DC and ClusterOne
       ovirt_host:
         name: hostb.lab.example.com
         auth: "{{ ovirt_auth }}"
         cluster: clusterone
-        state: reinstalled
+        state: present
         password: "{{ engine_password }}"
         public_key: true
+        address: hostb.lab.example.com
         force: true
 
 
