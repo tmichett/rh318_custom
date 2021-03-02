@@ -3,9 +3,9 @@
 
   vars_files:
     # Contains variables to connect to the Manager
-    - engine_vars.yml
+    - ./engine_vars.yml
     # Contains encrypted engine_password variable using ansible-vault
-    - passwords.yml
+    - ./passwords.yml
 
 # Create DataCenters and Clusters
 - name: Create Development DC
