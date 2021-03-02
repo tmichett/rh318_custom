@@ -32,6 +32,7 @@
         auth: "{{ ovirt_auth }}"
         cluster: clusterone
         state: present
+        force: true
 
 
   post_tasks:
