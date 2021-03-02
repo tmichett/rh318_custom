@@ -34,7 +34,7 @@
 
     - name: Pause for Maintenance Mode
       pause:
-        seconds: 15
+        seconds: 45
 
     - name: Move HostB into Development DC and ClusterOne
       ovirt_host:
@@ -47,6 +47,32 @@
         address: hostb.lab.example.com
         force: true
 
+    - name: Put HostC into Maintenance Mode
+      ovirt_host:
+        name: hostc.lab.example.com
+        auth: "{{ ovirt_auth }}"
+        state: maintenance
+
+    - name: Remove HostC from Cluster
+      ovirt_host:
+        name: hostc.lab.example.com
+        auth: "{{ ovirt_auth }}"
+        state: absent
+
+    - name: Pause for Maintenance Mode
+      pause:
+        seconds: 45
+
+    - name: Move HostC into Production DC and ClusterTwo
+      ovirt_host:
+        name: hostc.lab.example.com
+        auth: "{{ ovirt_auth }}"
+        cluster: clustertwo
+        state: present
+        password: "{{ engine_password }}"
+        public_key: true
+        address: hostc.lab.example.com
+        force: true
 
   post_tasks:
     - name: Logout from RHV
