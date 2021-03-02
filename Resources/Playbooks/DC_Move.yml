@@ -23,7 +23,8 @@
     - name: Put HostB into Maintenance Mode
       ovirt_host:
         name: hostb.lab.example.com
-        state: maintenance  
+        auth: "{{ ovirt_auth }}"
+        state: maintenance
 
 
 
