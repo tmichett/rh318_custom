@@ -1,4 +1,5 @@
-server_url: https://satellite.lab.example.com
-username: admin
-password: redhat
-validate_certs: no
+---
+url: https://satellite.lab.example.com
+un: admin
+pw: redhat
+validate: no
