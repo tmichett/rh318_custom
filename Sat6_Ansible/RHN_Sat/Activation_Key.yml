@@ -14,9 +14,9 @@
       - rhel-8-for-x86_64-appstream-rpms
 
   tasks:
-    - name: Create {{ activation_key }}-{{ lifecycle_env }} Activation Key
+    - name: Create the {{ activation_key }}Activation Key
       redhat.satellite.activation_key:
-        name: "{{ activation_key }}-{{ lifecycle_env }}"
+        name: "{{ activation_key }}"
         lifecycle_environment: "{{ lifecycle_env }}"
         content_view: "{{ content_view }}"
         subscriptions: "{{ subscriptions }}"
