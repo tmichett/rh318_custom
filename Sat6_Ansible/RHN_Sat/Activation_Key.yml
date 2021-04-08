@@ -10,7 +10,7 @@
     organization: Operations
 
   tasks:
-    - name: "Create {{ activation_key }}-{{ lifecycle_env }} Activation Key"
+    - name: Create {{ activation_key }}-{{ lifecycle_env }} Activation Key
       redhat.satellite.activation_key:
         name: "{{ activation_key }}-{{ lifecycle_env }}"
         lifecycle_environment: "{{ lifecycle_env }}"
