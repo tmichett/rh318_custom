@@ -6,7 +6,7 @@
     lifecycle_env: Library
     content_view: Default Organization View
     subscriptions:
-      - name: "Red Hat Enterprise Linux"
+      - name: "Red Hat Enterprise Linux Server,Standard (Physical or Virtual Nodes)"
     organization: Operations
 
   tasks:
