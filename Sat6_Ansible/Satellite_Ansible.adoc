@@ -1,0 +1,107 @@
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:status:
+:outfilesuffix: .adoc
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+:pygments-style: tango
+:source-highlighter: pygments
+:imagesdir: images/
+
+
+= Using Ansible to Control Red Hat Satellite
+
+New modules and collections have been added to Ansible for managing of RHEL Satellite servers. The Foreman modules that were previously supported have been replaced with Ansible collections.
+
+.Requirements
+
+* Ansible 2.9+
+* *redhat.satellite* collection or *theforeman.foreman* collection
+
+
+== Obtaining Ansible Collections
+
+.Ansible Automation Hub
+[TIP]
+====
+https://cloud.redhat.com/ansible/automation-hub/repo/published/redhat/satellite
+====
+
+
+== Installing Ansible Collections (offline)
+
+
+. Create director for Ansible Playbooks
++
+.Creating the Directory
+[source,bash]
+----
+[student@workstation ~]$ mkdir RHN_Sat
+
+[student@workstation ~]$ cd RHN_Sat
+----
+
+. Install collections with *ansible-galaxy*
++
+.Installing the Collection
+[source,bash]
+----
+[student@workstation RHN_Sat]$ ansible-galaxy collection install ~/redhat-satellite-2.0.1.tar.gz -p collections/ <1>
+[WARNING]: The specified collections path '/home/student/RHN_Sat/collections' is not
+part of the configured Ansible collections paths
+'/home/student/.ansible/collections:/usr/share/ansible/collections'. The installed
+collection won't be picked up in an Ansible run. <2>
+Process install dependency map
+Starting collection install process
+Installing 'redhat.satellite:2.0.1' to '/home/student/RHN_Sat/collections/ansible_collections/redhat/satellite'
+----
+<1> It is possible to specify where the collections get installed. This will install the collection, modules and roles to the specified path.
+<2> If you specify the *collections* path, you must ensure to make the appropriate changes in the *ansible.cfg* file.
++
+.*ansible.cfg* File
+[IMPORTANT]
+====
+
+[source,bash]
+----
+[defaults]
+remote_user = root
+inventory = inventory
+COLLECTIONS_PATHS = ~/.ansible/collections:/usr/share/ansible/collections:./collections
+
+
+[privilege_escalation]
+become = False
+become_method = sudo
+become_user = root
+become_ask_pass = False
+----
+====
+
+
+. Use collections and modules in a playbook
++
+.Create Simple Playbook for Testing
+[source,yaml]
+----
+- name: Test Satellite
+  hosts: localhost
+  tasks:
+    - name: create example.org domain
+      redhat.satellite.domain: <1>
+        name: example.org
+        state: present
+        server_url: https://satellite.lab.example.com <2>
+        username: admin <3>
+        password: redhat <4>
+        validate_certs: no  <5>
+----
+<1> Satellite collection module
+<2> Satellite URL
+<3> Satellite Admin Username
+<4> Satelltite Admin Password
+<5> Needed for Self-Signed certificates to disable SSL/TLS verification
