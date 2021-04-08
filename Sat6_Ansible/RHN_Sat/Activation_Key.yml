@@ -27,5 +27,6 @@
         password: "{{ pw }}"
         validate_certs: "{{ validate }}"
         content_overrides:
-        - label: "{{ repositories }}"
+        - label: "{{ item }}"
           override: enabled
+        loop: "{{ repositories }}"
