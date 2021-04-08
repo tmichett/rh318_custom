@@ -8,6 +8,10 @@
     subscriptions:
       - name: "Red Hat Enterprise Linux Server, Standard (Physical or Virtual Nodes)"
     organization: Operations
+    repositories:
+      - name: satellite-tools-6.6-for-rhel-8-x86_64-rpms
+      - name: rhel-8-for-x86_64-baseos-rpms
+      - name: rhel-8-for-x86_64-appstream-rpms
 
   tasks:
     - name: Create {{ activation_key }}-{{ lifecycle_env }} Activation Key
@@ -22,3 +26,6 @@
         username: "{{ un }}"
         password: "{{ pw }}"
         validate_certs: "{{ validate }}"
+        content_overrides:
+        - label: "{{ repositories }}"
+          override: enabled
