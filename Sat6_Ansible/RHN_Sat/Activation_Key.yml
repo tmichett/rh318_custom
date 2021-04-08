@@ -1,4 +1,6 @@
 - hosts: localhost
+  vars_files:
+    - sat_vars.yml
   vars:
     activation_key: OperationsServers
     lifecycle_env: Library
@@ -6,8 +8,7 @@
     subscriptions:
       - name: "Red Hat Enterprise Linux"
     organization: Operations
-  vars_files:
-    - sat_vars.yml
+
   tasks:
     - name: "Create {{ activation_key }}-{{ lifecycle_env }} Activation Key"
       redhat.satellite.activation_key:
