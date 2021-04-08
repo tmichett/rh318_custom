@@ -29,4 +29,4 @@
         content_overrides:
         - label: "{{ item }}"
           override: enabled
-        loop: "{{ repositories }}"
+      loop: "{{ repositories }}"
