@@ -15,8 +15,6 @@
     idm_password_exp: 20251231235959
     idm_rhv_gid: 123456789
 
-
-
   tasks:
 
     ### Create a user in IdM
@@ -35,7 +33,7 @@
         update_password: on_create
 
     ### Create a Group in IdM and add the user
-    - name: Create the IdM Group
+    - name: Create the IdM Group and add user
       ipa_group:
         ipa_pass: "{{ idm_admin_password }}"
         ipa_user: "{{ idm_admin_name }}"
@@ -54,3 +52,75 @@
     #    ipa_host: "{{ idm_host }}"
     #    name: "{{ idm_user_name2 }}"
     #    gidnumber: "{{ idm_rhv_gid }}"
+
+    ### Create a Group in IdM and add the user
+    - name: Create the IdM Group and add user
+      ipa_group:
+        ipa_pass: "{{ idm_admin_password }}"
+        ipa_user: "{{ idm_admin_name }}"
+        ipa_host: "{{ idm_host }}"
+        name: "{{ idm_user_group }}"
+        state: present
+#        gidnumber: "{{ idm_rhv_gid }}"
+        user:
+          - "{{ idm_user_name }}"  ### Ensures only users listed here are members of the group
+
+---
+- name: Modify RHV Users and Groups
+  hosts: rhvm.lab.example.com
+  user: localhost
+  become: false
+  vars_files:
+    # Contains variables to connect to the Manager
+    - engine_vars.yml
+    # Contains encrypted engine_password variable using ansible-vault
+    - passwords.yml
+    - users_and_groups.yml
+
+  pre_tasks:
+    - name: Login to RHV
+      ovirt_auth:
+        url: "{{ engine_url }}"
+        username: "{{ engine_user }}"
+        password: "{{ engine_password }}"
+        ca_file: "{{ engine_cafile | default(omit) }}"
+        insecure: "{{ engine_insecure | default(true) }}"
+      tags:
+        - always
+
+  tasks:
+
+    # System-Level Roles
+    # Reuires that a user exists, so must be verified first.
+
+    - name: Ensure "{{ rhv_user_name }}" user exists
+      ovirt_user:
+        auth: "{{ ovirt_auth }}"
+        name: "{{ rhv_user_name }}"
+        state: present
+        authz_name: lab.example.com-authz
+
+    - name: Ensure "{{ rhv_user_group }}" group exists
+      ovirt_user:
+        auth: "{{ ovirt_auth }}"
+        name: "{{ rhv_user_group }}"
+        state: present
+        authz_name: lab.example.com-authz
+
+    - name: Assign the "{{ rhv_user_name }}" User the SuperUser Admin Role in RHV
+      ovirt_permission:
+        auth: "{{ ovirt_auth }}"
+        user_name: "{{ rhv_user_name }}"
+        authz_name: lab.example.com-authz
+        object_type: system
+        role: SuperUser
+        state: present
+
+    - name: Assign the "{{ rhv_user_group }}" Group the SuperUser Admin Role in RHV
+      ovirt_permission:
+        auth: "{{ ovirt_auth }}"
+        group_name: "{{ rhv_user_group }}"
+        authz_name: lab.example.com-authz
+        object_type: system
+        role: SuperUser
+        state: present
