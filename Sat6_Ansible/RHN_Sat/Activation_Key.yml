@@ -2,7 +2,7 @@
   vars_files:
     - sat_vars.yml
   vars:
-    activation_key: OperationsServers
+    activation_key: OperationsServers-Ansible
     lifecycle_env: Library
     content_view: Default Organization View
     subscriptions:
