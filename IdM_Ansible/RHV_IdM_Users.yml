@@ -17,11 +17,11 @@
 
   tasks:
     - name: Create the IdM User
-      ipauser:
+      ipa_user:
         ipaadmin_password: "{{ idm_admin_password }}"
         name: "{{ idm_user_name }}"
         first: "{{ idm_fname }}"
-        last: "{{ iidm_lname }}"
+        last: "{{ idm_lname }}"
         phone: "{{ idm_phone }}"
         email:  "{{ idm_email }}"
         passwordexpiration: "{{ idm_password_exp }}"
