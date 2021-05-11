@@ -42,7 +42,7 @@
         ipa_host: "{{ idm_host }}"
         name: "{{ idm_user_group }}"
         state: present
-        gidnumber: "{{ idm_rhv_gid }}"
+#        gidnumber: "{{ idm_rhv_gid }}"
         user:
           - "{{ idm_user_name }}"  ### Ensures only users listed here are members of the group
 
