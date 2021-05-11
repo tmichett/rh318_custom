@@ -66,8 +66,7 @@
           - "{{ idm_user_name }}"  ### Ensures only users listed here are members of the group
 
 - name: Modify RHV Users and Groups
-  hosts: rhvm.lab.example.com
-  user: localhost
+  hosts: localhost
   become: false
   vars_files:
     # Contains variables to connect to the Manager
