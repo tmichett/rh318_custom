@@ -5,6 +5,7 @@
     vars/idm_vars.yml
   vars:
     idm_user_name: travis
+    idm_user_name2: travis2
     idm_user_password: I@mGr00t123!
     idm_user_group: rvh_admin_group
     idm_fname: Travis
@@ -12,6 +13,7 @@
     idm_email: travis@lab.example.com
     idm_phone: 9998675309
     idm_password_exp: 20251231235959
+    idm_rhv_gid: 123456789
 
 
 
@@ -40,5 +42,14 @@
         ipa_host: "{{ idm_host }}"
         name: "{{ idm_user_group }}"
         state: present
+        gidnumber: "{{ idm_rhv_gid }}"
         user:
-          - "{{ idm_user_name }}"
+          - "{{ idm_user_name }}"  ### Ensures only users listed here are members of the group
+
+    - name: Modify the IdM User
+      ipa_user:
+        ipa_pass: "{{ idm_admin_password }}"
+        ipa_user: "{{ idm_admin_name }}"
+        ipa_host: "{{ idm_host }}"
+        name: "{{ idm_user_name2 }}"
+        gidnumber: "{{ idm_rhv_gid }}"
