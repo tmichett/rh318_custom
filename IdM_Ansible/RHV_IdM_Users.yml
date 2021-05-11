@@ -11,7 +11,7 @@
     idm_lname: Example
     idm_email: travis@lab.example.com
     idm_phone: 9998675309
-    idm_password_exp: 2025-12-31 23:59:59
+    idm_password_exp: 20251231235959
 
 
 
@@ -25,7 +25,7 @@
         givenname: "{{ idm_fname }}"
         sn: "{{ idm_lname }}"
         telephonenumber: "{{ idm_phone }}"
-        email:  "{{ idm_email }}"
-        passwordexpiration: "{{ idm_password_exp }}"
+        mail:  "{{ idm_email }}"
+        krbpasswordexpiration: "{{ idm_password_exp }}"
         password: "{{ idm_user_password }}"
         update_password: on_create
