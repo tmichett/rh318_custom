@@ -32,9 +32,9 @@
         password: "{{ idm_user_password }}"
         update_password: on_create
 
-    ### Create a Group in IdM and add the user 
+    ### Create a Group in IdM and add the user
     - name: Create the IdM Group
-      ipa_user:
+      ipa_group:
         ipa_pass: "{{ idm_admin_password }}"
         ipa_user: "{{ idm_admin_name }}"
         ipa_host: "{{ idm_host }}"
