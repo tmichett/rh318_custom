@@ -24,7 +24,7 @@
         name: "{{ idm_user_name }}"
         givenname: "{{ idm_fname }}"
         sn: "{{ idm_lname }}"
-        phone: "{{ idm_phone }}"
+        telephonenumber: "{{ idm_phone }}"
         email:  "{{ idm_email }}"
         passwordexpiration: "{{ idm_password_exp }}"
         password: "{{ idm_user_password }}"
