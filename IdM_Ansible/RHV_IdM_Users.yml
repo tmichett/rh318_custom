@@ -46,10 +46,11 @@
         user:
           - "{{ idm_user_name }}"  ### Ensures only users listed here are members of the group
 
-    - name: Modify the IdM User
-      ipa_user:
-        ipa_pass: "{{ idm_admin_password }}"
-        ipa_user: "{{ idm_admin_name }}"
-        ipa_host: "{{ idm_host }}"
-        name: "{{ idm_user_name2 }}"
-        gidnumber: "{{ idm_rhv_gid }}"
+### Doesn't work as hoped
+    #- name: Modify the IdM User
+    #  ipa_user:
+    #    ipa_pass: "{{ idm_admin_password }}"
+    #    ipa_user: "{{ idm_admin_name }}"
+    #    ipa_host: "{{ idm_host }}"
+    #    name: "{{ idm_user_name2 }}"
+    #    gidnumber: "{{ idm_rhv_gid }}"
