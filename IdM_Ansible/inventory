@@ -9,3 +9,6 @@ localhost
 
 [rhvm]
 rhvm.lab.example.com
+
+[idm]
+utility.lab.example.com

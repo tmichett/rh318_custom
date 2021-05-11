@@ -1,16 +1,29 @@
 ---
 - name: Create Users and Groups in IdM and Add to RHVM
-  hosts: localhost
+  hosts: idm
+  vars_files:
+    vars/idm_vars.yml
   vars:
-    idm_user_name: OperationsServers
-    idm_user_password:
-    idm_user_group: Library
-    idm_admin_name: Default Organization View
-    idm_admin_password: redhat
+    idm_user_name: travis
+    idm_user_password: I@mGr00t123!
+    idm_user_group: Group Name
+    idm_fname: Travis
+    idm_lname: Example
+    idm_email: travis@lab.example.com
+    idm_phone: 9998675309
+    idm_password_exp: 2025-12-31 23:59:59
+
 
 
   tasks:
-    - name: Create the {{ activation_key }}Activation Key
-      redhat.satellite.activation_key:
-
-...
+    - name: Create the IdM User
+      ipauser:
+        ipaadmin_password: "{{ idm_admin_password }}"
+        name: "{{ idm_user_name }}"
+        first: "{{ idm_fname }}"
+        last: "{{ iidm_lname }}"
+        phone: "{{ idm_phone }}"
+        email:  "{{ idm_email }}"
+        passwordexpiration: "{{ idm_password_exp }}"
+        password: "{{ idm_user_password }}"
+        update_password: on_create
