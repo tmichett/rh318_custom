@@ -1,3 +1,4 @@
 ---
 idm_admin_name: admin
 idm_admin_password: RedHat123^
+idm_host: utility.lab.example.com
