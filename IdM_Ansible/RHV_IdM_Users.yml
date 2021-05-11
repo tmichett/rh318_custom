@@ -6,7 +6,7 @@
   vars:
     idm_user_name: travis
     idm_user_password: I@mGr00t123!
-    idm_user_group: Group Name
+    idm_user_group: rvh_admin_group
     idm_fname: Travis
     idm_lname: Example
     idm_email: travis@lab.example.com
@@ -16,6 +16,8 @@
 
 
   tasks:
+
+    ### Create a user in IdM
     - name: Create the IdM User
       ipa_user:
         ipa_pass: "{{ idm_admin_password }}"
@@ -29,3 +31,14 @@
         krbpasswordexpiration: "{{ idm_password_exp }}"
         password: "{{ idm_user_password }}"
         update_password: on_create
+
+    ### Create a Group in IdM and add the user 
+    - name: Create the IdM Group
+      ipa_user:
+        ipa_pass: "{{ idm_admin_password }}"
+        ipa_user: "{{ idm_admin_name }}"
+        ipa_host: "{{ idm_host }}"
+        name: "{{ idm_user_group }}"
+        state: present
+        user:
+          - "{{ idm_user_name }}"
