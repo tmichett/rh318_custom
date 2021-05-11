@@ -7,7 +7,7 @@
     idm_user_name: travis
     idm_user_name2: travis2
     idm_user_password: I@mGr00t123!
-    idm_user_group: rvh_admin_group
+    idm_user_group: rhv_admin_group
     idm_fname: Travis
     idm_lname: Example
     idm_email: travis@lab.example.com
@@ -99,7 +99,7 @@
         authz_name: lab.example.com-authz
 
     - name: Ensure "{{ rhv_user_group }}" group exists
-      ovirt_user:
+      ovirt_group:
         auth: "{{ ovirt_auth }}"
         name: "{{ rhv_user_group }}"
         state: present
