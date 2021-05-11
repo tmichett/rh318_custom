@@ -1,0 +1,12 @@
+- hosts: localhost
+  vars:
+    idm_user_name: OperationsServers
+    idm_user_password:
+    idm_user_group: Library
+    idm_admin_name: Default Organization View
+    idm_admin_password: redhat
+
+
+  tasks:
+    - name: Create the {{ activation_key }}Activation Key
+      redhat.satellite.activation_key:
