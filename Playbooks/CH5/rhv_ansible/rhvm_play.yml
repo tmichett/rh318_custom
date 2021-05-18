@@ -27,7 +27,7 @@
     - name: Gather Data Center Facts
       ovirt_datacenter_facts:
         auth: "{{ ovirt_auth }}"
-        pattern: name="{{ data_center_name }}"
+        pattern: name= "{{ data_center_name }}"
       #register: dc_result
     - debug:
         var: ovirt_datacenters
@@ -35,7 +35,7 @@
     - name: Gather Cluster Facts
       ovirt_cluster_facts:
         auth: "{{ ovirt_auth }}"
-        pattern: name="{{ cluster_name }}"
+        pattern: name= "{{ cluster_name }}"
       register: cluster_result
     - debug:
         msg: "{{ cluster_result }}"
