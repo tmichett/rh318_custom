@@ -1,0 +1,5 @@
+ansible -m user -a 'name=travis uid=9000 state=present' servera.lab.example.com
+
+ansible -m user -a 'name=travis uid=9000 state=present comment=Travis Michette' servera.lab.example.com
+
+NOTE: This also allows you to use "comment" to set the User's full name, you can also use "group" to add users to specific groups, use "password" to setup a password. It should be noted that for a password to be provided, it must already be encrypted/hashed.

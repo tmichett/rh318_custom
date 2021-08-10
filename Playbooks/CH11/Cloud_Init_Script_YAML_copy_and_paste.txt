@@ -1,0 +1,16 @@
+users:
+  - name: demo
+    groups: wheel
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+runcmd:
+  - echo "redhat" | passwd --stdin demo
+write_files:
+  - path: /home/demo/.vimrc
+    content: |
+      autocmd FileType yaml setlocal ai ts=2 sw=2 et colorcolumn=3,5,7,9,11
+packages:
+  - tree
+  - vim
+  - tmux
+  - bash-completion
