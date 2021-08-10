@@ -1,5 +1,66 @@
 ansible -m user -a 'name=travis uid=9000 state=present' servera.lab.example.com
 
-ansible -m user -a 'name=travis uid=9000 state=present comment=Travis Michette' servera.lab.example.com
+ansible -m user -a 'name=travis uid=9000 comment="Travis Michette" state=present' servera.lab.example.com
 
 NOTE: This also allows you to use "comment" to set the User's full name, you can also use "group" to add users to specific groups, use "password" to setup a password. It should be noted that for a password to be provided, it must already be encrypted/hashed.
+
+ansible all -i localhost, -m debug -a "msg={{ 'redhat' | password_hash('sha512', 'mysecretsalt') }}"   ### Generates hashed password
+ansible -m user -a 'name=travis uid=9000 comment="Travis Michette" password="$6$mysecretsalt$GcajIATSXc4CUJ.uOMrH.oB7A7dch4KSuaNfL12kfmhFZz7hH9gcttplfRfmk4rQ.sQnZieSBxqi6xPDFBGRC0" state=present'
+
+
+## Shell command for setting password
+echo redhat | passwd travis --stdin
+
+## Ad-Hoc Version of Getting Password from Shell-style command
+ansible -m shell -a 'echo redhat | passwd travis --stdin'
+
+## Playbook snippet for setting password
+### Create the Ansible User
+- name: Create Ansible User Password (if required)
+  shell: echo {{ ansible_user_password }} | passwd {{ ansible_user_name }} --stdin
+  when: ansible_user_password is defined
+
+
+
+Sudoers File
+
+This can be done a variety of ways ...
+
+ansible -m copy -a 'content="travis ALL=(ALL) NOPASSWD:ALL" dest=/etc/sudoers.d/travis validate="/usr/sbin/visudo -csf %s"'  ### Note that the VISUDO validates for you as improper entries in Sudo can kill the ability to SUDO
+
+
+Traditional Loop
+
+hosts="hosta hostb"
+for host in $hosts
+do
+  echo $host
+  ssh -t root@$host 'useradd -c "Travis Michette" -u 8000 travis2'
+done
+
+hosts="hosta hostb"
+for host in $hosts
+do
+  echo $host
+  ssh -t root@$host 'echo redhat | passwd travis2 --stdin'
+done
+
+
+hosts="hosta hostb"
+for host in $hosts
+do
+  echo $host
+  ssh -t root@$host 'echo "travis2 ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/travis2'
+done
+
+
+
+
+NOTE: This needs some work !!!!
+
+##hosts="hosta hostb"
+##for host in $hosts
+##do
+##  echo $host
+##  ssh -t root@$host 'useradd -c "Travis Michette" -u 8000 travis2 -p $6$mysecretsalt$GcajIATSXc4CUJ.uOMrH.oB7A7dch4KSuaNfL12kfmhFZz7hH9gcttplfRfmk4rQ.sQnZieSBxqi6xPDFBGRC0'
+##done
