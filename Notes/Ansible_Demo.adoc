@@ -1,0 +1,178 @@
+= {subject}
+:subject: Ansible Demonstration
+:description:  Demo for Script/CLI vs. Ad-Hoc vs. Playbook
+Travis Michette <tmichett@redhat.com>
+:doctype: book
+:customer:  GLS
+:listing-caption: Listing
+:toc:
+:toclevels: 7
+:sectnums:
+:sectnumlevels: 6
+:numbered:
+:chapter-label:
+:pdf-page-size: LETTER
+:icons: font
+ifdef::backend-pdf[]
+:title-page-background-image: image:EngagementJournalCoverPageLogoNew.jpg[pdfwidth=8.0in,align=top]
+:pygments-style: tango
+:source-highlighter: coderay
+endif::[]
+:revnumber: 1.0
+:imagesdir: images/
+
+= System Administration Demos Traditional vs. Ansible
+
+== Traditional Administration from the CLI
+
+Without using an automation language or platform, administrators have traditionally created batch scripts of loop commands to administer the system from a CLI interface.
+
+=== *A Traditional RHCSA method to add a new user for a single system*
+
+. Adding a new user and password from the command prompt.
++
+.Creating a User from the Command Line
+[source,bash]
+----
+useradd -c "Travis Michette" -u 5000 travis
+----
++
+.*useradd* Options
+[NOTE]
+====
+* *-u* options allows specifying a *userid*
+* *-c* option specifies the GECOS comment which is the user's full name.
+====
++
+.Setting a User Password from the Command Line
+[source,bash]
+----
+echo redhat | passwd travis --stdin
+----
+
+. Add user to Sudoers file to allow sudo without a password.
++
+.Adding a User without Requiring Password to Sudoers File from the Command Line in a Loop
+[source,bash]
+----
+echo "travis2 ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/travis2
+----
+
+
+=== A Traditional RHCSA method to add a new user for multiple systems
+
+. Adding a new user and password on multiple system from the command prompt.
++
+.Bash *for* loops to execute commands on multiple systems
+[TIP]
+====
+A *for* loop can be used to execute commands over multiple systems via SSH. This allows an administrator
+====
++
+.Creating a User from the Command Line in a Loop
+[source,bash]
+----
+hosts="hosta hostb"
+for host in $hosts
+do
+  echo $host
+  ssh -t root@$host 'useradd -c "Travis Michette" -u 8000 travis2'
+done
+----
++
+.*useradd* Options
+[NOTE]
+====
+* *-u* options allows specifying a *userid*
+* *-c* option specifies the GECOS comment which is the user's full name.
+====
++
+.Setting a User Password from the Command Line
+[source,bash]
+----
+hosts="hosta hostb"
+for host in $hosts
+do
+  echo $host
+  ssh -t root@$host 'echo redhat | passwd travis2 --stdin'
+done
+----
+
+. Add user to Sudoers file to allow sudo without a password on multiple systems.
++
+.Adding a User without Requiring Password to Sudoers File from the Command Line in a Loop
+[source,bash]
+----
+hosts="hosta hostb"
+for host in $hosts
+do
+  echo $host
+  ssh -t root@$host 'echo "travis2 ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/travis2'
+done
+----
+
+== System Administation with Ansible
+
+=== Ansible Ad-Hoc Commands
+
+Ansible *ad-hoc* commands allow administrators to perform repetitive tasks on one or more systems by leveraging an Ansible task interactively from the CLI.
+
+.Ansible *copy* Module Options
+[IMPORTANT]
+====
+It is important to validate a *sudoers* file to ensure that there are no errors that will break the ability to SUDO. VISUDO validates for you as improper entries in SUDO can kill the ability to SUDO.
+
+.Ansible *copy* Module in use
+[source,bash]
+----
+ansible -m copy -a 'content="travis ALL=(ALL) NOPASSWD:ALL" dest=/etc/sudoers.d/travis validate="/usr/sbin/visudo -csf %s"'
+----
+====
+
+
+.Creating a user with Ansible ad-hoc commands
+
+. Use the *user* module to create a user on one or more remote systems
++
+.Creating the User
+[source,bash]
+----
+ansible -m user -a 'name=travis uid=9000 comment="Travis Michette" state=present' servera.lab.example.com
+----
++
+.Create a Password for the User
+[source,bash]
+----
+ansible -m shell -a 'echo redhat | passwd travis --stdin'
+----
++
+.Command-Line Method
+[TIP]
+====
+The above ad-hoc Ansible command will leverage the traditional CLI method and shell redirection to allow setting the password for the provided user without providing the interactive password verification.
+====
+
+. Add the user to the Sudoers file
++
+.Ansible *ad-hoc* method for updating/creating a sudoers file
+[source,bash]
+----
+ansible -m copy -a 'content="travis ALL=(ALL) NOPASSWD:ALL" dest=/etc/sudoers.d/travis validate="/usr/sbin/visudo -csf %s"'
+----
+
+
+=== Ansible Playbook
+
+It is also possible to leverage a playbook to create the users and add them to one or more remote systems. A playbook will allow Infrastructure-as-Code and will allow for easily moving and changing users around on remote systems.
+
+
+
+.Ansible Playbook Snippet to Create User Password
+[source,YAML]
+----
+## Playbook snippet for setting password
+### Create the Ansible User
+- name: Create Ansible User Password (if required)
+  shell: echo {{ ansible_user_password }} | passwd {{ ansible_user_name }} --stdin
+  when: ansible_user_password is defined
+----
