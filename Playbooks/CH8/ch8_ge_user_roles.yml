@@ -22,7 +22,7 @@
   tasks:
 
     # System-Level Roles
-    # Reuires that a user exists, so must be verified first.
+    # Requires that a user exists, so must be verified first.
 
     - name: Ensure rhvadmin user exists
       ovirt_user:
