@@ -183,26 +183,22 @@ It is also possible to leverage a playbook to create the users and add them to o
 .Ansible Playbook to Create User and Set Password and add to Sudoers File
 [source,yaml]
 ----
-  ---
-  - name: Setup a New User for Sudoers
-    hosts: all
-    become: yes
-    tasks:
-      - name: Create a new User
-        user:
-          name: travis3
-          uid: 10000
-          comment: Travis Michette
-          state: present
-          password: {{ 'redhat' | password_hash('sha512', 'mysecretsalt') }}
+---
+- name: Setup a New User for Sudoers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create a new User
+      user:
+        name: travis3
+        uid: 10000
+        comment: Travis Michette
+        state: present
+        password: "{{ 'redhat' | password_hash('sha512', 'mysecretsalt') }}"
 
-      - name: Add user to Sudoers File
-        copy:
-          content: travis3 ALL=(ALL) NOPASSWD:ALL
-          dest: /etc/sudoers.d/travis3
-          validate: /usr/sbin/visudo -csf %s
-
-
-
-
+    - name: Add user to Sudoers File
+      copy:
+        content: travis3 ALL=(ALL) NOPASSWD:ALL
+        dest: /etc/sudoers.d/travis3
+        validate: /usr/sbin/visudo -csf %s
 ----
